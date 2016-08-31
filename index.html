@@ -1,0 +1,32 @@
+<html>
+<head>
+<title>Chaotic Oscillators for 2D Art</title>
+<style>
+	body{
+		margin:0;
+		padding: 0;
+	}
+</style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+</body>
+<script>
+let canvas = document.getElementById("canvas")
+canvas.width = window.innerWidth
+canvas.height = window.innerHeight
+
+let ctx = canvas.getContext("2d")
+
+ctx.beginPath()
+ctx.moveTo(0, canvas.height / 2)
+
+let dx = .01
+
+for(let x = 0; x < 1000; x += dx){
+	let y = Math.sin(x / 50) * 100 + canvas.height / 2
+	ctx.lineTo(x, y)
+}
+ctx.stroke()
+</script>
+</html>
