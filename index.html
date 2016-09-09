@@ -6,57 +6,53 @@
 		margin:0;
 		padding: 0;
 	}
+	.offset{
+		margin-left: 6em;
+	}
 </style>
 </head>
 <body>
 <canvas id="canvas"></canvas>
+<span>
+<input id="SliderC1" type="range" min="10.0" max="20.0" value="15.6" step=".05"></input>
+<input id="SliderC2" type="range" min=".5" max="5.0" value="1.0" step=".05"></input>
+<input id="SliderC3" type="range" min="20.0" max="40.0" value="28.0" step=".05"></input>
+<input id="SliderM0" type="range" min="-2.0" max="-0.5" value="-1.143" step=".001"></input>
+<input id="SliderM1" type="range" min="-2.0" max="-0.5" value="-0.714" step=".001"></input>
+</span>
+<p>
+<span id="PC1">c1:</span>
+<span id="PC2" class="offset">c2:</span>
+<span id="PC3" class="offset">c3:</span>
+<span id="PM0" class="offset">m0:</span>
+<span id="PM1" class="offset">m1:</span>
+</p>
 </body> 
 <script src="numeric.js"></script>
 <script>
-let canvas = document.getElementById("canvas")
-canvas.width = window.innerWidth
-canvas.height = window.innerHeight
+let canvas = document.getElementById("canvas");
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight - 100;
 
-let ctx = canvas.getContext("2d")
-
-/*ctx.beginPath()
-ctx.moveTo(0, canvas.height / 2)
-
-let dx = .01
-
-for(let x = 0; x < 1000; x += dx){
-	let y = Math.sin(x / 50) * -100 + canvas.height / 2
-	ctx.lineTo(x, y)
-}
-ctx.stroke()
-
-let m0 = -1.143
-let m1 = -0.714
-
-
-console.log(numeric.dopri(-15.6, 15.6, -15.6, function(x, y){return(m1*x+(m0-m1)/2*(Math.abs(x+1)-Math.abs(x-1)));}))
-let x_dopri = numeric.dopri(-15.6, 15.6, -15.6, function(x, y){return(m1*x+(m0-m1)/2*(Math.abs(x+1)-Math.abs(x-1)));})
-let y_dopri = numeric.dopri(1, -1, 1, function(x, y){return(m1*x+(m0-m1)/2*(Math.abs(x+1)-Math.abs(x-1)));})
-let z_dopri = numeric.dopri(1, -28, 1, function(x, y){return y;})
-console.log(y_dopri)
-console.log(z_dopri)
-
-ctx.beginPath()
-ctx.moveTo(canvas.width / 2, canvas.height / 2)
-
-for(let i = 0; i < x_dopri.x.length; i++){
-	ctx.lineTo(x_dopri.x[i] + canvas.width / 2, x_dopri.y[i] + canvas.height / 2)
-}
-ctx.stroke()*/
+let ctx = canvas.getContext("2d");
 
  function p(x){
-   return m1*x+(m0-m1)/2*(Math.abs(x+1)-Math.abs(x-1));
+	let tempM0 = sliderM0.value;
+	let tempM1 = sliderM1.value;
+   return tempM1*x+(tempM0-tempM1)/2*(Math.abs(x+1)-Math.abs(x-1));
 }
- function f(x,y,z,t){ return( c1*(y-x-p(x)) ); }
 
- function g(x,y,z,t){ return( c2*(x-y+z) ); }
+let sliderC1 = document.getElementById("SliderC1");
+let sliderC2 = document.getElementById("SliderC2");
+let sliderC3 = document.getElementById("SliderC3");
+let sliderM0 = document.getElementById("SliderM0");
+let sliderM1 = document.getElementById("SliderM1");
 
- function h(x,y,z,t){ return( -c3*y ); }
+ function f(x,y,z,t){ return( sliderC1.value*(y-x-p(x)) ); }
+
+ function g(x,y,z,t){ return( sliderC2.value*(x-y+z) ); }
+
+ function h(x,y,z,t){ return( -1*sliderC3.value*y ); }
 
 
 /*rungekatta begins here*/
@@ -153,17 +149,51 @@ var m0=-1.143;//-1.143
 var m1=-0.714;//0.714
 var step =0.012;//0.012
 
-var i=0;
-while(i<9000)
-{
+let drawChua = function(){
+	var i=0;
+	setInterval(chuaStep, 10);
+}
+
+let chuaStep = function(){
 	gData = grapher(gData);
 	ctx.beginPath();
 	ctx.moveTo(100*gData[0].x+canvas.width/2,100*gData[0].y+canvas.height/2);
 	ctx.lineTo(100*gData[1].x+canvas.width/2,100*gData[1].y+canvas.height/2);
-	console.log(gData[0]);
+	//console.log(gData[0]);
 	ctx.stroke();
-	i++;
 }
 
+drawChua();
+
+let updateC1 = function() {
+    document.getElementById("PC1").innerHTML = "c1: " + sliderC1.value;
+};
+
+let updateC2 = function() {
+    document.getElementById("PC2").innerHTML = "c2: " + sliderC2.value;
+};
+
+let updateC3 = function() {
+    document.getElementById("PC3").innerHTML = "c3: " + sliderC3.value;
+};
+
+let updateM0 = function() {
+    document.getElementById("PM0").innerHTML = "m0: " + sliderM0.value;
+};
+
+let updateM1 = function() {
+    document.getElementById("PM1").innerHTML = "m1: " + sliderM1.value;
+};
+
+updateC1();
+updateC2();
+updateC3();
+updateM0();
+updateM1();
+sliderC1.onmousemove = updateC1;
+sliderC2.onmousemove = updateC2;
+sliderC3.onmousemove = updateC3;
+sliderM0.onmousemove = updateM0;
+sliderM1.onmousemove = updateM1;
 </script>
 </html>
