@@ -1,9 +1,10 @@
+/*
 let canvas = document.getElementById("canvas");
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight - 100;
 
 let ctx = canvas.getContext("2d");
-
+*/
  function p(x){
 	let tempM0 = sliderM0.value;
 	let tempM1 = sliderM1.value;
@@ -118,19 +119,23 @@ var m1=-0.714;//0.714
 var step =0.012;//0.012
 
 let drawChua = function(){
-	var i=0;
 	setInterval(chuaStep, 10);
 }
 
 let chuaStep = function(){
 	gData = grapher(gData);
-	ctx.beginPath();
-	ctx.moveTo(100*gData[0].x+canvas.width/2,100*gData[0].y+canvas.height/2);
-	ctx.lineTo(100*gData[1].x+canvas.width/2,100*gData[1].y+canvas.height/2);
 	//console.log(gData[0]);
-	ctx.stroke();
+	//console.log(new THREE.Vector3(100*gData[0].x,100*gData[0].y,100*gData[0].z));
+	splinePoints.push(new THREE.Vector3(100*gData[0].x,100*gData[0].y,100*gData[0].z));
+	drawSpline(splinePoints);
+	//ctx.beginPath();
+	//ctx.moveTo(100*gData[0].x+canvas.width/2,100*gData[0].y+canvas.height/2);
+	//ctx.lineTo(100*gData[1].x+canvas.width/2,100*gData[1].y+canvas.height/2);
+	//console.log(gData[0]);
+	//ctx.stroke();
 }
 
+let splinePoints = new Array();
 drawChua();
 
 let updateC1 = function() {
