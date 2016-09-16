@@ -1,6 +1,7 @@
 let scene, camera, renderer;
 let spline, geometry, material, object;
 let box,boxgeometry,boxmaterial,boxmesh;
+let angle=0;
 
 
 init();
@@ -9,7 +10,8 @@ function init()
 {
 	scene = new THREE.Scene();
 	camera = new THREE.PerspectiveCamera(90,window.innerWidth/(window.innerHeight - 100),1,1000);
-	camera.position.z = 100;
+	//camera = new THREE.OrthographicCamera(window.innerWidth/-2,window.innerWidth/2,(window.innerHeight-100)/2,(window.innerHeight-100)/-2,1,1000);
+	//camera.position.z = 400;
 	
 	geometry = new THREE.Geometry();
 	material = new THREE.LineBasicMaterial( { color : 0xff0000 , linewidth:100} );
@@ -22,21 +24,47 @@ function init()
 
 function drawSpline(pointArray)
 {
-	//console.log(pointArray);
-	requestAnimationFrame(drawSpline);
-	spline = new THREE.CatmullRomCurve3(pointArray);
-	geometry.vertices = spline.getPoints(50);
-	console.log(spline.getPoints(50));
+	camera.position.x = 400 * Math.cos( angle );  
+	camera.position.z = 400 * Math.sin( angle );
+	angle += 0.001;
+	camera.lookAt(new THREE.Vector3(0,0,0));
+	
+	boxgeometry = new THREE.BoxGeometry(2,2,2);
+	boxmaterial = new THREE.MeshBasicMaterial({color:0xff0000});
+	boxmesh = new THREE.Mesh(boxgeometry,boxmaterial);
+	scene.add(boxmesh);
+	console.log(pointArray[pointArray.length-1]);
+	boxmesh.position.set(pointArray[pointArray.length-1].x,pointArray[pointArray.length-1].y,pointArray[pointArray.length-1].z);
+	// if(scene.children.length>0)
+	// scene.remove(scene.children[0]);
+	//console.log(pointArray.length);
+	//requestAnimationFrame(drawSpline);
+	//spline = new THREE.CatmullRomCurve3(pointArray);
+	//geometry.vertices = pointArray;
+	//console.log(geometry.vertices);
+	//console.log(spline.getPoints(pointArray.length));
 	//console.log(spline.points);
 	//console.log(spline.getPoints(spline.points.length));
-	object = new THREE.Line( geometry, material );
+	//object = new THREE.Line( geometry, material );
 	//object.scale.set(100, 100, 100);
-	scene.add(object);
+	//scene.add(object);
 	//console.log(spline.points);
-	/*boxgeometry = new THREE.BoxGeometry(20,20,20);
-	boxmaterial = new THREE.MeshBasicMaterial({color:0xff0000,wireframe:true});
-	boxmesh = new THREE.Mesh(boxgeometry,boxmaterial);
-	scene.add(boxmesh);*/
+	
+	//Create a closed wavey loop
+	// box = new THREE.CatmullRomCurve3( [
+	// new THREE.Vector3( -10, 0, 10 ),
+	// new THREE.Vector3( -5, 5, 5 ),
+	// new THREE.Vector3( 0, 0, 0 ),
+	// new THREE.Vector3( 5, -5, 5 ),
+	// new THREE.Vector3( 10, 0, 10 )
+	// ] );
+
+	// boxgeometry = new THREE.Geometry();
+	// boxgeometry.vertices = box.getPoints( 50 );
+
+	// boxmaterial = new THREE.LineBasicMaterial( { color : 0xff0000 } );
+	// boxmesh = new THREE.Line(boxgeometry,boxmaterial);
+	// scene.add(boxmesh);
 	
 	renderer.render(scene,camera);
 }

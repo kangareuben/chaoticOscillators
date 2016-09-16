@@ -126,6 +126,7 @@ let chuaStep = function(){
 	gData = grapher(gData);
 	//console.log(gData[0]);
 	//console.log(new THREE.Vector3(100*gData[0].x,100*gData[0].y,100*gData[0].z));
+	//console.log(gData[0].x);
 	splinePoints.push(new THREE.Vector3(100*gData[0].x,100*gData[0].y,100*gData[0].z));
 	drawSpline(splinePoints);
 	//ctx.beginPath();
