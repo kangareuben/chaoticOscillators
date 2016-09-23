@@ -12,7 +12,7 @@ init();
 function init()
 {
 	scene = new THREE.Scene();
-	//scene.fog = new THREE.FogExp2( 0xffffff, 0.004 );
+	scene.fog = new THREE.FogExp2( 0x000000, 0.002 );
 	camera = new THREE.PerspectiveCamera(90,window.innerWidth/(window.innerHeight - 100),1,1000);
 	//camera = new THREE.OrthographicCamera(window.innerWidth/-2,window.innerWidth/2,(window.innerHeight-100)/2,(window.innerHeight-100)/-2,1,1000);
 	//camera.position.z = 400;
@@ -47,8 +47,8 @@ function drawSpline(pointArray)
 	// console.log(pointArray[pointArray.length-1]);
 	// boxmesh.position.set(pointArray[pointArray.length-1].x,pointArray[pointArray.length-1].y,pointArray[pointArray.length-1].z);
 	
-	boxgeometry = new THREE.PlaneGeometry(2,2);
-	boxmaterial = new THREE.MeshBasicMaterial({color:0xff0000});
+	boxgeometry = new THREE.PlaneGeometry(5,5);
+	boxmaterial = new THREE.MeshBasicMaterial({map:sprite,transparent:true,blending:THREE.AdditiveBlending});
 	boxmesh = new THREE.Mesh(boxgeometry,boxmaterial);
 	scene.add(boxmesh);
 	console.log(pointArray[pointArray.length-1]);
