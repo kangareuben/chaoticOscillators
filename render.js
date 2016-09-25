@@ -2,17 +2,31 @@ let scene, camera, renderer;
 let spline, geometry, material, object;
 let box,boxgeometry,boxmaterial,boxmesh;
 let angle=0;
-
+let cameraRadius=400;
 //let particles,sprite;
 let textureLoader;
 
+let MouseWheelHandler = function(e) {
+	console.log(e.wheelDelta);
+	// let delta = Math.max(-1,Math.min(1,(e.wheelDelta||-e.detail)));
+	// sliderRad.value=sliderRad.value+parseInt(e.wheelDelta*1/120);
+	// updateRad();
+	cameraRadius+=e.wheelDelta/60;
+	if(cameraRadius<100)
+		cameraRadius=100;
+	if(cameraRadius>1000)
+		cameraRadius=1000;
+}
+
+document.body.addEventListener("mousewheel",MouseWheelHandler,false);
+document.body.addEventListener("DOMMouseScroll",MouseWheelHandler,false);
 
 init();
 
 function init()
 {
 	scene = new THREE.Scene();
-	scene.fog = new THREE.FogExp2( 0x000000, 0.002 );
+	scene.fog = new THREE.FogExp2( 0x000000, 1/(2*cameraRadius) );
 	camera = new THREE.PerspectiveCamera(90,window.innerWidth/(window.innerHeight - 100),1,1000);
 	//camera = new THREE.OrthographicCamera(window.innerWidth/-2,window.innerWidth/2,(window.innerHeight-100)/2,(window.innerHeight-100)/-2,1,1000);
 	//camera.position.z = 400;
@@ -31,8 +45,8 @@ function init()
 
 function drawSpline(pointArray)
 {
-	camera.position.x = 400 * Math.cos( angle );  
-	camera.position.z = 400 * Math.sin( angle );
+	camera.position.x = cameraRadius * Math.cos( angle );  
+	camera.position.z = cameraRadius * Math.sin( angle );
 	angle += 0.001;
 	camera.lookAt(new THREE.Vector3(0,0,0));
 	for(let i=0;i<scene.children.length;i++)
@@ -51,7 +65,7 @@ function drawSpline(pointArray)
 	boxmaterial = new THREE.MeshBasicMaterial({map:sprite,transparent:true,blending:THREE.AdditiveBlending});
 	boxmesh = new THREE.Mesh(boxgeometry,boxmaterial);
 	scene.add(boxmesh);
-	console.log(pointArray[pointArray.length-1]);
+	// console.log(pointArray[pointArray.length-1]);
 	boxmesh.position.set(pointArray[pointArray.length-1].x,pointArray[pointArray.length-1].y,pointArray[pointArray.length-1].z);
 	
 	// if(scene.children.length>0)

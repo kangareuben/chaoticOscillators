@@ -17,6 +17,7 @@ let sliderC3 = document.getElementById("SliderC3");
 let sliderM0 = document.getElementById("SliderM0");
 let sliderM1 = document.getElementById("SliderM1");
 
+
  function f(x,y,z,t){ return( sliderC1.value*(y-x-p(x)) ); }
 
  function g(x,y,z,t){ return( sliderC2.value*(x-y+z) ); }
