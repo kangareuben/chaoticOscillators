@@ -27,6 +27,12 @@ document.body.addEventListener("DOMMouseScroll",MouseWheelHandler,false);
 
 init();
 
+function addHexColor(c1, c2) {
+  var hexStr = (parseInt(c1, 16) + parseInt(c2, 16)).toString(16);
+  while (hexStr.length < 6) { hexStr = '0' + hexStr; } // Zero pad.
+  return hexStr;
+}
+
 function init()
 {
 	scene = new THREE.Scene();
@@ -56,20 +62,15 @@ function drawSpline(pointArray)
 	for(let i=0;i<scene.children.length;i++)
 	{
 		scene.children[i].quaternion.copy(camera.quaternion);
+		if(scene.children.length - i <= 255){
+			scene.children[i].material.color.setHex(CalculateColor(scene.children.length - i));
+		}
 	}
 	
-	// boxgeometry = new THREE.BoxGeometry(2,2,2);
-	// boxmaterial = new THREE.MeshBasicMaterial({color:0xff0000});
-	// boxmesh = new THREE.Mesh(boxgeometry,boxmaterial);
-	// scene.add(boxmesh);
-	// console.log(pointArray[pointArray.length-1]);
-	// boxmesh.position.set(pointArray[pointArray.length-1].x,pointArray[pointArray.length-1].y,pointArray[pointArray.length-1].z);
-	
 	boxgeometry = new THREE.PlaneGeometry(5,5);
-	boxmaterial = new THREE.MeshBasicMaterial({map:sprite,transparent:true,blending:THREE.AdditiveBlending});
+	boxmaterial = new THREE.MeshBasicMaterial({map:sprite,transparent:true,blending:THREE.AdditiveBlending,color:0xff0000});
 	boxmesh = new THREE.Mesh(boxgeometry,boxmaterial);
 	scene.add(boxmesh);
-	// console.log(pointArray[pointArray.length-1]);
 	boxmesh.position.set(pointArray[pointArray.length-1].x,pointArray[pointArray.length-1].y,pointArray[pointArray.length-1].z);
 	
 	// if(scene.children.length>0)
@@ -104,4 +105,22 @@ function drawSpline(pointArray)
 	// scene.add(boxmesh);
 	
 	renderer.render(scene,camera);
+}
+
+let CalculateColor = function(timeSinceRed){
+	if(timeSinceRed >= 255){
+		return rgbToHex(255, 255, 255);
+	}
+	else{
+		return rgbToHex(255, timeSinceRed, timeSinceRed);
+	}
+}
+
+let rgbToHex = function(r, g, b){
+	return "0x" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+}
+
+let componentToHex = function(c){
+	let hex = c.toString(16);
+	return hex.length == 1 ? "0" + hex : hex;
 }
