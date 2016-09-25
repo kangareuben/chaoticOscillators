@@ -7,11 +7,15 @@ let cameraRadius=400;
 let textureLoader;
 
 let MouseWheelHandler = function(e) {
-	console.log(e.wheelDelta);
+	//console.log(e.wheelDelta);
+	console.log(e.detail);
 	// let delta = Math.max(-1,Math.min(1,(e.wheelDelta||-e.detail)));
 	// sliderRad.value=sliderRad.value+parseInt(e.wheelDelta*1/120);
 	// updateRad();
-	cameraRadius+=e.wheelDelta/60;
+	if(e.wheelDelta)
+		cameraRadius+=e.wheelDelta/60;
+	else
+		cameraRadius-=e.detail;
 	if(cameraRadius<100)
 		cameraRadius=100;
 	if(cameraRadius>1000)
