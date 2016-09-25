@@ -15,7 +15,7 @@ let MouseWheelHandler = function(e) {
 	if(e.wheelDelta)
 		cameraRadius+=e.wheelDelta/60;
 	else
-		cameraRadius-=e.detail;
+		cameraRadius+=e.detail;
 	if(cameraRadius<100)
 		cameraRadius=100;
 	if(cameraRadius>1000)
