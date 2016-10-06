@@ -81,6 +81,9 @@ function drawSpline(pointArray)
 	scene.add(boxmesh);
 	boxmesh.position.set(pointArray[pointArray.length-1].x,pointArray[pointArray.length-1].y,pointArray[pointArray.length-1].z);
 	
+	//playaudio
+	playSound(boxmesh.position.z+boxmesh.position.y+boxmesh.position.z,0.01,1,0.0025,0.0025);
+	
 	renderer.render(scene,camera);
 }
 
