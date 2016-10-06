@@ -4,6 +4,7 @@ let box,boxgeometry,boxmaterial,boxmesh;
 let angle=0;
 let cameraRadius=400;
 let textureLoader, composer;
+let timeToStartFade = 1024;
 
 let MouseWheelHandler = function(e) {
 	if(e.wheelDelta)
@@ -65,10 +66,11 @@ function drawSpline(pointArray)
 	camera.position.z = cameraRadius * Math.sin( angle );
 	angle += 0.001;
 	camera.lookAt(new THREE.Vector3(0,0,0));
+	DeleteOldestChild();
 	for(let i=0;i<scene.children.length;i++)
 	{
 		scene.children[i].quaternion.copy(camera.quaternion);
-		if(scene.children.length - i <= 255){
+		if(scene.children.length - i <= (timeToStartFade + 256)){
 			scene.children[i].material.color.setHex(CalculateColor(scene.children.length - i));
 		}
 	}
@@ -82,8 +84,21 @@ function drawSpline(pointArray)
 	renderer.render(scene,camera);
 }
 
+function DeleteOldestChild(){
+	if(scene.children.length > timeToStartFade + 256){
+		scene.remove(scene.children[0]);
+		console.log(scene.children.length);
+	}
+}
+
 let CalculateColor = function(timeSinceRed){
-	if(timeSinceRed >= 255){
+	if(timeSinceRed >= (timeToStartFade + 256)){
+		return rgbToHex(0, 0, 0);
+	}
+	else if(timeSinceRed >= timeToStartFade){
+		return rgbToHex((timeToStartFade + 255) - timeSinceRed, (timeToStartFade + 255) - timeSinceRed, (timeToStartFade + 255) - timeSinceRed);
+	}
+	else if(timeSinceRed >= 255){
 		return rgbToHex(255, 255, 255);
 	}
 	else{
