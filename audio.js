@@ -1,10 +1,9 @@
-let AudioContext = window.AudioContext || window.webkitAudioContext;
 let audioCtx, oscNode, gainNode;
 audioInit();
 
 function audioInit()
 {
-	audioCtx = new AudioContext();
+	audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 }
 
 function playSound(frequency, duration, amp=1, attack=0, decay=0, detune=0)
@@ -12,6 +11,7 @@ function playSound(frequency, duration, amp=1, attack=0, decay=0, detune=0)
 	oscNode = audioCtx.createOscillator();
 	oscNode.type = 'triangle';
 	oscNode.frequency.value = frequency;
+	oscNode.detune.value = detune;
 	
 	gainNode = audioCtx.createGain();
 	gainNode.gain.setValueAtTime(0,audioCtx.currentTime);

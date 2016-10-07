@@ -44,18 +44,19 @@ function init()
 	renderer = new THREE.WebGLRenderer();
 	renderer.setSize(window.innerWidth,window.innerHeight-100);
 	
-	//composer = new THREE.EffectComposer( renderer );
-	//composer.addPass( new THREE.RenderPass( scene, camera ) );
+	composer = new THREE.EffectComposer( renderer );
+	composer.addPass( new THREE.RenderPass( scene, camera ) );
 	
-	//postProcessing();
+	postProcessing();
 	
 	document.body.appendChild(renderer.domElement);
 }
 
 function postProcessing()
 {
-	let dotScreenEffect = new THREE.ShaderPass( THREE.BasicShader );
+	let dotScreenEffect = new THREE.ShaderPass( THREE.LuminosityShader );
 	//dotScreenEffect.uniforms[ 'scale' ].value = 4;
+	//composer.addPass(new THREE.BloomPass(3,25,5,256));
 	dotScreenEffect.renderToScreen = true;
 	composer.addPass( dotScreenEffect );
 }
@@ -64,7 +65,7 @@ function drawSpline(pointArray)
 {
 	camera.position.x = cameraRadius * Math.cos( angle );  
 	camera.position.z = cameraRadius * Math.sin( angle );
-	angle += 0.001;
+	angle += 0.002;
 	camera.lookAt(new THREE.Vector3(0,0,0));
 	DeleteOldestChild();
 	for(let i=0;i<scene.children.length;i++)
@@ -82,15 +83,15 @@ function drawSpline(pointArray)
 	boxmesh.position.set(pointArray[pointArray.length-1].x,pointArray[pointArray.length-1].y,pointArray[pointArray.length-1].z);
 	
 	//playaudio
-	playSound(boxmesh.position.z+boxmesh.position.y+boxmesh.position.z,0.01,1,0.0025,0.0025);
+	playSound(Math.sqrt(Math.pow(boxmesh.position.x,2)+Math.pow(boxmesh.position.y,2)+Math.pow(boxmesh.position.z,2)),0.01,1,0.0025,0.0025,750 - Math.random()*1000);
 	
-	renderer.render(scene,camera);
+	composer.render(scene,camera);
 }
 
 function DeleteOldestChild(){
 	if(scene.children.length > timeToStartFade + 256){
 		scene.remove(scene.children[0]);
-		console.log(scene.children.length);
+		//console.log(scene.children.length);
 	}
 }
 
