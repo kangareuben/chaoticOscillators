@@ -72,12 +72,23 @@ function drawSpline(pointArray)
 	{
 		scene.children[i].quaternion.copy(camera.quaternion);
 		if(scene.children.length - i <= (timeToStartFade + 256)){
-			scene.children[i].material.color.setHex(CalculateColor(scene.children.length - i));
+			//scene.children[i].material.color.setHex(CalculateColor(scene.children.length - i));
 		}
 	}
 	
 	boxgeometry = new THREE.PlaneGeometry(5,5);
-	boxmaterial = new THREE.MeshBasicMaterial({map:sprite,transparent:true,blending:THREE.AdditiveBlending,color:0xff0000});
+	//boxmaterial = new THREE.MeshBasicMaterial({map:sprite,transparent:true,blending:THREE.AdditiveBlending,color:0xff0000});
+	let uniforms = {
+		color: { type: "c", value: new THREE.Color(0xffffff) }
+	};
+	let attributes ={};
+	boxmaterial = new THREE.ShaderMaterial({
+		uniforms: uniforms,
+		vertexShader: document.getElementById("vertShader").textContent,
+		fragmentShader: document.getElementById("fragShader").textContent,
+		transparent: true,
+		blending: THREE.AdditiveBlending
+	});
 	boxmesh = new THREE.Mesh(boxgeometry,boxmaterial);
 	scene.add(boxmesh);
 	boxmesh.position.set(pointArray[pointArray.length-1].x,pointArray[pointArray.length-1].y,pointArray[pointArray.length-1].z);
