@@ -1,10 +1,14 @@
 let scene, camera, renderer;
-let spline, geometry, material, object;
+let light, geometry, material, object,sprite,bumpmap;
 let box,boxgeometry,boxmaterial,boxmesh;
 let angle=0;
 let cameraRadius=400;
 let textureLoader, composer;
-let timeToStartFade = 1024;
+let timeToStartFade = 1536;
+
+let wipeoutLength = 35;
+let wipeoutFrame = 36;
+let c = "0x0a0a0a";
 
 let MouseWheelHandler = function(e) {
 	if(e.wheelDelta)
@@ -40,14 +44,17 @@ function init()
 	
 	textureLoader = new THREE.TextureLoader();
 	sprite = textureLoader.load("./snowflake1.png");
+	bumpmap = textureLoader.load("./bump.jpg");
 
 	renderer = new THREE.WebGLRenderer();
 	renderer.setSize(window.innerWidth,window.innerHeight-100);
-	
+	/*
 	composer = new THREE.EffectComposer( renderer );
 	composer.addPass( new THREE.RenderPass( scene, camera ) );
 	
-	postProcessing();
+	postProcessing();*/
+	light = new THREE.AmbientLight(0xff70ff);
+	scene.add(light);
 	
 	document.body.appendChild(renderer.domElement);
 }
@@ -61,6 +68,30 @@ function postProcessing()
 	composer.addPass( dotScreenEffect );
 }
 
+function wipeout()
+{	
+	for(let i = 1; i < scene.children.length; i++)
+	{
+		if(i%wipeoutLength==0)
+		{
+			scene.children[i].material.emissive = c;
+		}
+	}
+	
+	wipeoutFrame++;
+	
+	if(wipeoutFrame > wipeoutLength)
+	{
+		for(let i = 1; i < scene.children.length; i++)
+		{
+			if(scene.children[i].material.emissive == c)
+			{
+				scene.remove(scene.children[i]);
+			}
+		}
+		}
+}
+
 function drawSpline(pointArray)
 {
 	camera.position.x = cameraRadius * Math.cos( angle );  
@@ -68,29 +99,50 @@ function drawSpline(pointArray)
 	angle += 0.002;
 	camera.lookAt(new THREE.Vector3(0,0,0));
 	DeleteOldestChild();
-	for(let i=0;i<scene.children.length;i++)
+	for(let i=1;i<scene.children.length;i++)
 	{
 		scene.children[i].quaternion.copy(camera.quaternion);
 		if(scene.children.length - i <= (timeToStartFade + 256)){
 			scene.children[i].material.color.setHex(CalculateColor(scene.children.length - i));
+			//console.log(c);
 		}
 	}
 	
+	if(wipeoutFrame > wipeoutLength)
+	{
+		if(scene.children.length > timeToStartFade + 254)
+		{
+			//console.log(0.00001 * scene.children.length);
+			if(Math.random() < 0.000001 * scene.children.length)
+			{
+				wipeoutFrame = 0;
+				wipeout();
+			}
+		}
+	}
+	else
+	{
+		wipeout();
+	}
+	
 	boxgeometry = new THREE.PlaneGeometry(5,5);
-	boxmaterial = new THREE.MeshBasicMaterial({map:sprite,transparent:true,blending:THREE.AdditiveBlending,color:0xff0000});
+	boxmaterial = new THREE.MeshPhongMaterial({map:sprite,transparent:true,blending:THREE.AdditiveBlending,color:0xff0000,specular:0xffffff,shininess:10000,emissive:0x101010});
 	boxmesh = new THREE.Mesh(boxgeometry,boxmaterial);
+	//light = new THREE.PointLight(0xff00ff,1000000,1000000);
+	//scene.add(light);
 	scene.add(boxmesh);
 	boxmesh.position.set(pointArray[pointArray.length-1].x,pointArray[pointArray.length-1].y,pointArray[pointArray.length-1].z);
+	//light.position.set(pointArray[pointArray.length-1].x,pointArray[pointArray.length-1].y,pointArray[pointArray.length-1].z);
 	
 	//playaudio
 	playSound(Math.sqrt(Math.pow(boxmesh.position.x,2)+Math.pow(boxmesh.position.y,2)+Math.pow(boxmesh.position.z,2)),0.01,1,0.0025,0.0025,750 - Math.random()*1000);
 	
-	composer.render(scene,camera);
+	renderer.render(scene,camera);
 }
 
 function DeleteOldestChild(){
 	if(scene.children.length > timeToStartFade + 256){
-		scene.remove(scene.children[0]);
+		scene.remove(scene.children[1]);
 		//console.log(scene.children.length);
 	}
 }
