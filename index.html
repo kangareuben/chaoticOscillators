@@ -38,25 +38,6 @@
 <script src="shaders/ColorifyShader.js"></script>
 <script src="shaders/ColorifyShader.js"></script>
 <script src="shaders/HorizontalTiltShiftShader.js"></script>
-<!--custom shaders-->
-<script id="vertShader" type="x-shader/x-vertex">
-uniform vec3 color;
-varying vec3 vColor;
-
-void main()
-{
-	vColor = color;
-	gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-}
-</script>
-<script id="fragShader" type="x-shader/x-fragment">
-varying vec3 vColor;
-
-void main()
-{
-	gl_FragColor = vec4(vColor, 1.0);
-}
-</script>
 
 <script src="postprocessing/EffectComposer.js"></script>
 <script src="postprocessing/RenderPass.js"></script>
