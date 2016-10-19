@@ -10,6 +10,9 @@ let wipeoutLength = 35;
 let wipeoutFrame = 36;
 let c = "0x0a0a0a";
 
+let counter=0;
+let soundDensity=13;
+
 let MouseWheelHandler = function(e) {
 	if(e.wheelDelta)
 		cameraRadius+=e.wheelDelta/60;
@@ -113,7 +116,7 @@ function drawSpline(pointArray)
 		if(scene.children.length > timeToStartFade + 254)
 		{
 			//console.log(0.00001 * scene.children.length);
-			if(Math.random() < 0.000001 * scene.children.length)
+			if(Math.random() < 0.00001 * scene.children.length)
 			{
 				wipeoutFrame = 0;
 				wipeout();
@@ -123,6 +126,10 @@ function drawSpline(pointArray)
 	else
 	{
 		wipeout();
+		if(wipeoutFrame == wipeoutLength)
+		{
+			//soundDensity=5;
+		}
 	}
 	
 	boxgeometry = new THREE.PlaneGeometry(5,5);
@@ -135,8 +142,16 @@ function drawSpline(pointArray)
 	//light.position.set(pointArray[pointArray.length-1].x,pointArray[pointArray.length-1].y,pointArray[pointArray.length-1].z);
 	
 	//playaudio
-	playSound(Math.sqrt(Math.pow(boxmesh.position.x,2)+Math.pow(boxmesh.position.y,2)+Math.pow(boxmesh.position.z,2)),0.01,1,0.0025,0.0025,750 - Math.random()*1000);
-	
+	if(counter%soundDensity==0)
+	{
+		playSound(Math.sqrt(Math.pow(boxmesh.position.x,2)+Math.pow(boxmesh.position.y,2)+Math.pow(boxmesh.position.z,2)),0.02,1,0.001,0.009,750 - Math.random()*1000);
+	}
+	counter++;
+	if((counter%190==0)&&(soundDensity>5))
+	{
+		soundDensity--;
+	}
+	console.log(soundDensity);
 	renderer.render(scene,camera);
 }
 
