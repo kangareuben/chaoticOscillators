@@ -12,6 +12,7 @@ let c = "0x0a0a0a";
 
 let counter=0;
 let soundDensity=13;
+let osc, mod, gain;
 
 let MouseWheelHandler = function(e) {
 	if(e.wheelDelta)
@@ -60,6 +61,23 @@ function init()
 	scene.add(light);
 	
 	document.body.appendChild(renderer.domElement);
+	
+	osc = audioCtx.createOscillator();
+	osc.type = 'sine';
+	osc.frequency.value = 1;
+	osc.start();
+	
+	mod = audioCtx.createOscillator();
+	mod.disconnect();
+	mod.frequency.value = 0.25;
+	mod.start();
+	
+	gain = audioCtx.createGain();
+	
+	osc.connect(gain);
+	gain.gain.value = 0;
+	gain.connect(convolver);
+	convolver.connect(audioCtx.destination);
 }
 
 function postProcessing()
@@ -141,6 +159,12 @@ function drawSpline(pointArray)
 	boxmesh.position.set(pointArray[pointArray.length-1].x,pointArray[pointArray.length-1].y,pointArray[pointArray.length-1].z);
 	//light.position.set(pointArray[pointArray.length-1].x,pointArray[pointArray.length-1].y,pointArray[pointArray.length-1].z);
 	
+	mod.frequency.value = 0.25 * boxmesh.position.x * 0.01;
+	osc.frequency.value = boxmesh.position.y*((mod.frequency.value * boxmesh.position.x)/(camera.position.distanceTo(boxmesh.position)))*100;
+	//console.log(osc.frequency.value);
+	gain.gain.value = (camera.position.distanceTo(boxmesh.position)) * 0.0005;
+	
+	
 	//playaudio
 	if(counter%soundDensity==0)
 	{
@@ -151,7 +175,7 @@ function drawSpline(pointArray)
 	{
 		soundDensity--;
 	}
-	console.log(soundDensity);
+	//console.log(soundDensity);
 	renderer.render(scene,camera);
 }
 
