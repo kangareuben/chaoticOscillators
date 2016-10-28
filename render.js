@@ -12,7 +12,8 @@ let c = "0x0a0a0a";
 
 let counter=0;
 let soundDensity=13;
-let osc, mod, gain;
+let carr, mod, gain, gain2;
+let carrierFrequency, modulationIndex, modulationGain, ratio, modulationFrequency;
 
 let MouseWheelHandler = function(e) {
 	if(e.wheelDelta)
@@ -48,7 +49,7 @@ function init()
 	
 	textureLoader = new THREE.TextureLoader();
 	sprite = textureLoader.load("./snowflake1.png");
-	bumpmap = textureLoader.load("./bump.jpg");
+	//bumpmap = textureLoader.load("./bump.jpg");
 
 	renderer = new THREE.WebGLRenderer();
 	renderer.setSize(window.innerWidth,window.innerHeight-100);
@@ -62,10 +63,14 @@ function init()
 	
 	document.body.appendChild(renderer.domElement);
 	
-	osc = audioCtx.createOscillator();
-	osc.type = 'sine';
-	osc.frequency.value = 1;
-	osc.start();
+	carrierFrequency = 200;
+	modulationIndex = 10;
+	ratio = 0.2;
+	
+	carr = audioCtx.createOscillator();
+	carr.type = 'triangle';
+	carr.frequency.value = carrierFrequency;
+	carr.start();
 	
 	mod = audioCtx.createOscillator();
 	mod.disconnect();
@@ -73,11 +78,14 @@ function init()
 	mod.start();
 	
 	gain = audioCtx.createGain();
-	
-	osc.connect(gain);
-	gain.gain.value = 0;
-	gain.connect(convolver);
+	gain2 = audioCtx.createGain();
+	mod.connect(gain);
+	gain.connect(carr.frequency);
+	carr.connect(gain2);
+	gain2.connect(convolver);
 	convolver.connect(audioCtx.destination);
+	
+	gain2.gain.value = 0.2;
 }
 
 function postProcessing()
@@ -159,10 +167,21 @@ function drawSpline(pointArray)
 	boxmesh.position.set(pointArray[pointArray.length-1].x,pointArray[pointArray.length-1].y,pointArray[pointArray.length-1].z);
 	//light.position.set(pointArray[pointArray.length-1].x,pointArray[pointArray.length-1].y,pointArray[pointArray.length-1].z);
 	
-	mod.frequency.value = 0.25 * boxmesh.position.x * 0.01;
-	osc.frequency.value = boxmesh.position.y*((mod.frequency.value * boxmesh.position.x)/(camera.position.distanceTo(boxmesh.position)))*100;
+	//carr.frequency.value = boxmesh.position.y;
+	modulationIndex = camera.position.distanceTo(boxmesh.position)/100;
+	//modulationGain = carrierFrequency * modulationIndex;
+	modulationGain =  camera.position.distanceTo(boxmesh.position)/10;
+	//modulationFrequency = carrierFrequency * ratio;
+	modulationFrequency = 2 / Math.abs(boxmesh.position.x / boxmesh.position.y);
+	mod.frequency.value = modulationFrequency;
+	gain.gain.value = modulationGain;
+	gain2.gain.value = 100 / (camera.position.distanceTo(boxmesh.position));
+	
+	//carr.frequency.value += mod.frequency.value * modulationGain;
+	
+	//osc.frequency.value = boxmesh.position.y*((mod.frequency.value * boxmesh.position.x)/(camera.position.distanceTo(boxmesh.position)))*100;
 	//console.log(osc.frequency.value);
-	gain.gain.value = (camera.position.distanceTo(boxmesh.position)) * 0.0005;
+	//gain.gain.value = (camera.position.distanceTo(boxmesh.position)) * 0.0005;
 	
 	
 	//playaudio
