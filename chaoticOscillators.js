@@ -5,6 +5,7 @@ canvas.height = window.innerHeight - 100;
 
 let ctx = canvas.getContext("2d");
 */
+
  function p(x){
 	let tempM0 = sliderM0.value;
 	let tempM1 = sliderM1.value;
@@ -123,13 +124,14 @@ let drawChua = function(){
 	setInterval(chuaStep, 10);
 }
 
-let chuaStep = function(){
+let chuaStep = function(frame){
 	gData = grapher(gData);
 	//console.log(gData[0]);
 	//console.log(new THREE.Vector3(100*gData[0].x,100*gData[0].y,100*gData[0].z));
 	//console.log(gData[0].x);
 	splinePoints.push(new THREE.Vector3(100*gData[0].x,100*gData[0].y,100*gData[0].z));
-	drawSpline(splinePoints);
+	update();
+	handleLeapInput(frame);
 	//ctx.beginPath();
 	//ctx.moveTo(100*gData[0].x+canvas.width/2,100*gData[0].y+canvas.height/2);
 	//ctx.lineTo(100*gData[1].x+canvas.width/2,100*gData[1].y+canvas.height/2);
@@ -137,8 +139,41 @@ let chuaStep = function(){
 	//ctx.stroke();
 }
 
+let handleLeapInput = function(frame) {
+	for(let f=0;f < frame.fingers.length; f++)
+	{
+		let finger = frame.fingers[f];
+		let fingerValue = 1/Math.sqrt(Math.pow(finger.dipPosition[0],2)+Math.pow(finger.dipPosition[1],2)+Math.pow(finger.dipPosition[2],2));
+		switch(f)
+		{
+			case 0: 
+					break;
+			case 1: //case 1
+					break;
+			case 2: //case 2
+					break;
+			case 3: //case 3
+					break;
+			case 4: //case 4
+					break;
+		}
+		
+	}
+}
+
+let update = function() {
+	drawSpline(splinePoints);
+	//Leap.loop({},leapUpdate);
+	//leapUpdate();
+}
+
+let leapUpdate = function() {
+	//console.log(frame.hands.length);
+}
+
 let splinePoints = new Array();
-drawChua();
+//drawChua();
+Leap.loop({},chuaStep);
 
 let updateC1 = function() {
     document.getElementById("PC1").innerHTML = "c1: " + sliderC1.value;
