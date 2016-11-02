@@ -18,13 +18,23 @@ let sliderC3 = document.getElementById("SliderC3");
 let sliderM0 = document.getElementById("SliderM0");
 let sliderM1 = document.getElementById("SliderM1");
 
+let leapCenter, leapHeight, leapWidth, leapDepth;
+
 
  function f(x,y,z,t){ return( sliderC1.value*(y-x-p(x)) ); }
 
  function g(x,y,z,t){ return( sliderC2.value*(x-y+z) ); }
 
  function h(x,y,z,t){ return( -1*sliderC3.value*y ); }
-
+ 
+ 
+function updateLeapInteractionBox(frame)
+{
+	leapCenter = frame.interactionBox.center;
+	leapDepth = frame.interactionBox.depth;
+	leapHeight = frame.interactionBox.height;
+	leapWidth = frame.interactionBox.width;
+}
 
 /*rungekatta begins here*/
 function rungekatta(){
@@ -126,9 +136,6 @@ let drawChua = function(){
 
 let chuaStep = function(frame){
 	gData = grapher(gData);
-	//console.log(gData[0]);
-	//console.log(new THREE.Vector3(100*gData[0].x,100*gData[0].y,100*gData[0].z));
-	//console.log(gData[0].x);
 	splinePoints.push(new THREE.Vector3(100*gData[0].x,100*gData[0].y,100*gData[0].z));
 	update();
 	handleLeapInput(frame);
@@ -140,11 +147,14 @@ let chuaStep = function(frame){
 }
 
 let handleLeapInput = function(frame) {
+	updateLeapInteractionBox(frame);
 	for(let f=0;f < frame.fingers.length; f++)
 	{
 		let finger = frame.fingers[f];
-		let fingerValue = 1/Math.sqrt(Math.pow(finger.dipPosition[0],2)+Math.pow(finger.dipPosition[1],2)+Math.pow(finger.dipPosition[2],2));
-		switch(f)
+		sliderM0.value = mapInputToOutputRange(finger.dipPosition[1], leapCenter[1] - leapHeight/2, leapCenter[1] + leapHeight/2, -2, -1.05);
+		updateM0();
+		//let fingerValue = 1/Math.sqrt(Math.pow(finger.dipPosition[0],2)+Math.pow(finger.dipPosition[1],2)+Math.pow(finger.dipPosition[2],2));
+		/*switch(f)
 		{
 			case 0: 
 					break;
@@ -156,9 +166,15 @@ let handleLeapInput = function(frame) {
 					break;
 			case 4: //case 4
 					break;
-		}
+		}*/
 		
 	}
+}
+
+let mapInputToOutputRange = function(input, inputMin, inputMax, outputMin, outputMax)
+{
+	let output = outputMin + (input-inputMin) * (outputMax - outputMin)/(inputMax - inputMin);
+	return output;
 }
 
 let update = function() {
