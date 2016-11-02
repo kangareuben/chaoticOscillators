@@ -139,11 +139,6 @@ let chuaStep = function(frame){
 	splinePoints.push(new THREE.Vector3(100*gData[0].x,100*gData[0].y,100*gData[0].z));
 	update();
 	handleLeapInput(frame);
-	//ctx.beginPath();
-	//ctx.moveTo(100*gData[0].x+canvas.width/2,100*gData[0].y+canvas.height/2);
-	//ctx.lineTo(100*gData[1].x+canvas.width/2,100*gData[1].y+canvas.height/2);
-	//console.log(gData[0]);
-	//ctx.stroke();
 }
 
 let handleLeapInput = function(frame) {
@@ -151,23 +146,65 @@ let handleLeapInput = function(frame) {
 	for(let f=0;f < frame.fingers.length; f++)
 	{
 		let finger = frame.fingers[f];
-		sliderM0.value = mapInputToOutputRange(finger.dipPosition[1], leapCenter[1] - leapHeight/2, leapCenter[1] + leapHeight/2, -2, -1.05);
+		sliderM0.value = mapInputToOutputRange(finger.dipPosition[1], leapCenter[1] - leapHeight/2, leapCenter[1] + leapHeight/2, -1.05, -2);
 		updateM0();
-		//let fingerValue = 1/Math.sqrt(Math.pow(finger.dipPosition[0],2)+Math.pow(finger.dipPosition[1],2)+Math.pow(finger.dipPosition[2],2));
-		/*switch(f)
+	}
+	if(frame.gestures.length > 0)
+	{
+		let leftSwipeLH = 0;
+		let leftSwipeRH = 0;
+		let rightSwipeLH = 0;
+		let rightSwipeRH = 0;
+		for(let g=0; g < frame.gestures.length; g++)
 		{
-			case 0: 
-					break;
-			case 1: //case 1
-					break;
-			case 2: //case 2
-					break;
-			case 3: //case 3
-					break;
-			case 4: //case 4
-					break;
-		}*/
-		
+			let gesture = frame.gestures[g];
+			if(gesture.type == "swipe")
+			{
+				if(gesture.direction[0] > 0)
+				{
+					if(frame.hand(gesture.handIds[0]).type == "right")
+					{
+						rightSwipeRH++;
+					}
+					else
+					{
+						rightSwipeLH++;
+					}
+				}
+				else
+				{
+					if(frame.hand(gesture.handIds[0]).type == "right")
+					{
+						leftSwipeRH++;
+					}
+					else
+					{
+						leftSwipeLH++;
+					}
+				}
+			}
+		}
+		console.log("leftswipeLH:"+leftSwipeLH+" rightswipeRH:"+rightSwipeRH+" leftswipeRH:"+leftSwipeRH+" rightSwipeLH:"+rightSwipeLH);
+		if((leftSwipeRH>0) && (rightSwipeLH>0))
+		{
+			//camera zoom out
+			console.log("zoom out");
+			cameraRadius+=5;
+			if(cameraRadius>1000)
+			{
+				cameraRadius = 1000;
+			}
+		}
+		else if((leftSwipeLH>0)&&(rightSwipeRH>0))
+		{
+			//camera zoom in
+			console.log("zoom in");
+			cameraRadius-=5;
+			if(cameraRadius<100)
+			{
+				cameraRadius = 100;
+			}
+		}
 	}
 }
 
@@ -179,17 +216,11 @@ let mapInputToOutputRange = function(input, inputMin, inputMax, outputMin, outpu
 
 let update = function() {
 	drawSpline(splinePoints);
-	//Leap.loop({},leapUpdate);
-	//leapUpdate();
-}
-
-let leapUpdate = function() {
-	//console.log(frame.hands.length);
 }
 
 let splinePoints = new Array();
 //drawChua();
-Leap.loop({},chuaStep);
+Leap.loop({enableGestures: true},chuaStep);
 
 let updateC1 = function() {
     document.getElementById("PC1").innerHTML = "c1: " + sliderC1.value;
