@@ -20,10 +20,10 @@ let MouseWheelHandler = function(e) {
 		cameraRadius+=e.wheelDelta/60;
 	else
 		cameraRadius+=e.detail;
-	if(cameraRadius<100)
-		cameraRadius=100;
-	if(cameraRadius>1000)
-		cameraRadius=1000;
+}
+
+let Clamp = function(valueToClamp, lowerLimit, upperLimit) {
+	return Math.min(Math.max(valueToClamp, lowerLimit),upperLimit);
 }
 
 document.body.addEventListener("mousewheel",MouseWheelHandler,false);
@@ -125,6 +125,7 @@ function drawSpline(pointArray)
 {
 	camera.position.x = cameraRadius * Math.cos( angle );  
 	camera.position.z = cameraRadius * Math.sin( angle );
+	cameraRadius = Clamp(cameraRadius,100,1000);
 	angle += 0.002;
 	camera.lookAt(new THREE.Vector3(0,0,0));
 	DeleteOldestChild();

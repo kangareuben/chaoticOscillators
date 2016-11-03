@@ -143,12 +143,41 @@ let chuaStep = function(frame){
 
 let handleLeapInput = function(frame) {
 	updateLeapInteractionBox(frame);
-	for(let f=0;f < frame.fingers.length; f++)
+	// for(let f=0;f < frame.fingers.length; f++)
+	// {
+		// let finger = frame.fingers[f];
+		// sliderM0.value = mapInputToOutputRange(finger.dipPosition[1], leapCenter[1] - leapHeight/2, leapCenter[1] + leapHeight/2, -1.05, -2);
+		// updateM0();
+	// }
+	if(frame.hands.length>0)
 	{
-		let finger = frame.fingers[f];
-		sliderM0.value = mapInputToOutputRange(finger.dipPosition[1], leapCenter[1] - leapHeight/2, leapCenter[1] + leapHeight/2, -1.05, -2);
-		updateM0();
+		//zoom using palmposition and depth
+		let palmZ = frame.hands[0].palmPosition[2];
+		let palmY = frame.hands[0].palmPosition[1];
+		if(palmZ>(leapCenter[2]+leapDepth/4))
+		{
+			cameraRadius+=1.5;
+		}
+		else if(palmZ<(leapCenter[2]-leapDepth/4))
+		{
+			cameraRadius-=1.5;
+		}
+		//control M0 using palmPosition and height		
+		else if(palmY>(leapCenter[1]+leapHeight/4))
+		{
+			sliderM0.value = sliderM0.value - 0.003;
+			updateM0();
+		}
+		else if(palmY<80)
+		{
+			//console.log(palmY);
+			//console.log(leapCenter[1]-leapHeight/4);
+			console.log("preplus"+sliderM0.value);
+			sliderM0.value = parseFloat(sliderM0.value) + 0.003;
+			updateM0();
+		}
 	}
+	//gestures to zoom
 	if(frame.gestures.length > 0)
 	{
 		let leftSwipeLH = 0;
@@ -190,20 +219,13 @@ let handleLeapInput = function(frame) {
 			//camera zoom out
 			console.log("zoom out");
 			cameraRadius+=5;
-			if(cameraRadius>1000)
-			{
-				cameraRadius = 1000;
-			}
 		}
-		else if((leftSwipeLH>0)&&(rightSwipeRH>0))
+		else 
+		if((leftSwipeLH>0)&&(rightSwipeRH>0))
 		{
 			//camera zoom in
 			console.log("zoom in");
 			cameraRadius-=5;
-			if(cameraRadius<100)
-			{
-				cameraRadius = 100;
-			}
 		}
 	}
 }
