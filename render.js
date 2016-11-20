@@ -15,6 +15,8 @@ let soundDensity=13;
 let carr, mod, gain, gain2;
 let carrierFrequency, modulationIndex, modulationGain, ratio, modulationFrequency;
 
+let gui, params;
+
 let MouseWheelHandler = function(e) {
 	if(e.wheelDelta)
 		cameraRadius+=e.wheelDelta/60;
@@ -41,7 +43,7 @@ function init()
 {
 	scene = new THREE.Scene();
 	//scene.fog = new THREE.FogExp2( 0x000000, 1/(2*cameraRadius) );
-	camera = new THREE.PerspectiveCamera(90,window.innerWidth/(window.innerHeight - 100),1,1000);
+	camera = new THREE.PerspectiveCamera(90,window.innerWidth/window.innerHeight,1,1000);
 	//camera = new THREE.OrthographicCamera(window.innerWidth/-2,window.innerWidth/2,(window.innerHeight-100)/2,(window.innerHeight-100)/-2,1,1000);
 	
 	geometry = new THREE.Geometry();
@@ -52,7 +54,7 @@ function init()
 	//bumpmap = textureLoader.load("./bump.jpg");
 
 	renderer = new THREE.WebGLRenderer();
-	renderer.setSize(window.innerWidth,window.innerHeight-100);
+	renderer.setSize(window.innerWidth,window.innerHeight);
 	/*
 	composer = new THREE.EffectComposer( renderer );
 	composer.addPass( new THREE.RenderPass( scene, camera ) );
@@ -90,6 +92,22 @@ function init()
 	convolver.connect(audioCtx.destination);
 	
 	gain2.gain.value = 0.2;
+	
+	gui = new dat.GUI({
+		height: 4 * 32 - 1
+	});
+	
+	params = {
+		chaos: 10,
+		decay: 11,
+		duality: 53,
+		stability: 30
+	};
+	
+	gui.add(params, "chaos").min(0).max(100).step(1).listen();
+	gui.add(params, "decay").min(0).max(100).step(1).listen();
+	gui.add(params, "duality").min(0).max(100).step(1).listen();
+	gui.add(params, "stability").min(0).max(100).step(1).listen();
 }
 
 function postProcessing()

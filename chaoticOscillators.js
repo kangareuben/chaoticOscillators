@@ -7,25 +7,30 @@ let ctx = canvas.getContext("2d");
 */
 
  function p(x){
-	let tempM0 = sliderM0.value;
-	let tempM1 = sliderM1.value;
+	//let tempM0 = sliderM0.value;
+	//let tempM1 = sliderM1.value;
+	let tempM0 = mapInputToOutputRange(params.chaos,0,100,-1.05,-2);
+	let tempM1 = mapInputToOutputRange(params.duality,0,100,-0.96,-0.5);
    return tempM1*x+(tempM0-tempM1)/2*(Math.abs(x+1)-Math.abs(x-1));
 }
 
-let sliderC1 = document.getElementById("SliderC1");
-let sliderC2 = document.getElementById("SliderC2");
-let sliderC3 = document.getElementById("SliderC3");
-let sliderM0 = document.getElementById("SliderM0");
-let sliderM1 = document.getElementById("SliderM1");
+// let sliderC1 = document.getElementById("SliderC1");
+// let sliderC2 = document.getElementById("SliderC2");
+// let sliderC3 = document.getElementById("SliderC3");
+// let sliderM0 = document.getElementById("SliderM0");
+// let sliderM1 = document.getElementById("SliderM1");
 
 let leapCenter, leapHeight, leapWidth, leapDepth;
 
 
- function f(x,y,z,t){ return( sliderC1.value*(y-x-p(x)) ); }
+function f(x,y,z,t)
+{ 
+	return( mapInputToOutputRange(params.stability,0,100,18,10)*(y-x-p(x)) ); 
+}
 
- function g(x,y,z,t){ return( sliderC2.value*(x-y+z) ); }
+function g(x,y,z,t){ return( mapInputToOutputRange(params.decay,0,100,0.5,5.0)*(x-y+z) ); }
 
- function h(x,y,z,t){ return( -1*sliderC3.value*y ); }
+function h(x,y,z,t){ return( -1*28*y ); }
  
  
 function updateLeapInteractionBox(frame)
@@ -205,14 +210,18 @@ let handleLeapInput = function(frame) {
 				{
 					if(gesture.direction[1] > 0)
 					{
-						sliderM0.value = sliderM0.value - 0.003*gesture.speed/50;
-						updateM0();
+						// sliderM0.value = sliderM0.value - 0.003*gesture.speed/50;
+						// updateM0();
+						params.chaos+=3;
+						params.chaos = Clamp(params.chaos,0,100);
 						break;
 					}
 					else
 					{
-						sliderM0.value = parseFloat(sliderM0.value) + 0.003*gesture.speed/50;
-						updateM0();
+						// sliderM0.value = parseFloat(sliderM0.value) + 0.003*gesture.speed/50;
+						// updateM0();
+						params.chaos-=3;
+						params.chaos = Clamp(params.chaos,0,100);
 						break;
 					}
 				}
@@ -235,33 +244,33 @@ let splinePoints = new Array();
 //drawChua();
 Leap.loop({enableGestures: true},chuaStep);
 
-let updateC1 = function() {
-    document.getElementById("PC1").innerHTML = "c1: " + sliderC1.value;
-};
+// let updateC1 = function() {
+    // document.getElementById("PC1").innerHTML = "c1: " + sliderC1.value;
+// };
 
-let updateC2 = function() {
-    document.getElementById("PC2").innerHTML = "c2: " + sliderC2.value;
-};
+// let updateC2 = function() {
+    // document.getElementById("PC2").innerHTML = "c2: " + sliderC2.value;
+// };
 
-let updateC3 = function() {
-    document.getElementById("PC3").innerHTML = "c3: " + sliderC3.value;
-};
+// let updateC3 = function() {
+    // document.getElementById("PC3").innerHTML = "c3: " + sliderC3.value;
+// };
 
-let updateM0 = function() {
-    document.getElementById("PM0").innerHTML = "m0: " + sliderM0.value;
-};
+// let updateM0 = function() {
+    // document.getElementById("PM0").innerHTML = "m0: " + sliderM0.value;
+// };
 
-let updateM1 = function() {
-    document.getElementById("PM1").innerHTML = "m1: " + sliderM1.value;
-};
+// let updateM1 = function() {
+    // document.getElementById("PM1").innerHTML = "m1: " + sliderM1.value;
+// };
 
-updateC1();
-updateC2();
-updateC3();
-updateM0();
-updateM1();
-sliderC1.onmousemove = updateC1;
-sliderC2.onmousemove = updateC2;
-sliderC3.onmousemove = updateC3;
-sliderM0.onmousemove = updateM0;
-sliderM1.onmousemove = updateM1;
+// updateC1();
+// updateC2();
+// updateC3();
+// updateM0();
+// updateM1();
+// sliderC1.onmousemove = updateC1;
+// sliderC2.onmousemove = updateC2;
+// sliderC3.onmousemove = updateC3;
+// sliderM0.onmousemove = updateM0;
+// sliderM1.onmousemove = updateM1;
