@@ -1,7 +1,7 @@
 let scene, camera, renderer;
 let light, geometry, material, object,sprite,bumpmap;
 let box,boxgeometry,boxmaterial,boxmesh;
-let angle=0;
+let angle,dollyspeed;
 let cameraRadius=400;
 let textureLoader, composer;
 let timeToStartFade = 1536;
@@ -58,6 +58,10 @@ function init()
 	composer.addPass( new THREE.RenderPass( scene, camera ) );
 	
 	postProcessing();*/
+	
+	angle=0;
+	dollyspeed=0.002;
+	
 	light = new THREE.AmbientLight(0xff70ff);
 	scene.add(light);
 	
@@ -121,12 +125,25 @@ function wipeout()
 		}
 }
 
+function normalizeDollySpeed()
+{
+	if(dollyspeed > 0.04)
+		dollyspeed = 0.04;
+	if(dollyspeed > 0.002)
+		dollyspeed -= 0.00004;
+	if(dollyspeed < (-0.04))
+		dollyspeed = (-0.04);
+	if(dollyspeed < (0.002))
+		dollyspeed += 0.00004;
+}
+
 function drawSpline(pointArray)
 {
 	camera.position.x = cameraRadius * Math.cos( angle );  
 	camera.position.z = cameraRadius * Math.sin( angle );
 	cameraRadius = Clamp(cameraRadius,100,1000);
-	angle += 0.002;
+	normalizeDollySpeed();
+	angle += dollyspeed;
 	camera.lookAt(new THREE.Vector3(0,0,0));
 	DeleteOldestChild();
 	for(let i=1;i<scene.children.length;i++)

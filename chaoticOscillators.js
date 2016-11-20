@@ -154,16 +154,16 @@ let handleLeapInput = function(frame) {
 		//zoom using palmposition and depth
 		let palmZ = frame.hands[0].palmPosition[2];
 		let palmY = frame.hands[0].palmPosition[1];
-		if(palmZ>(leapCenter[2]+leapDepth/4))
-		{
-			cameraRadius+=1.5;
-		}
-		else if(palmZ<(leapCenter[2]-leapDepth/4))
-		{
-			cameraRadius-=1.5;
-		}
+		// if(palmZ>(leapCenter[2]+leapDepth/4))
+		// {
+			// cameraRadius+=1.5;
+		// }
+		// else if(palmZ<(leapCenter[2]-leapDepth/4))
+		// {
+			// cameraRadius-=1.5;
+		// }
 		//control M0 using palmPosition and height		
-		else if(palmY>(leapCenter[1]+leapHeight/4))
+		/*else if(palmY>(leapCenter[1]+leapHeight/4))
 		{
 			sliderM0.value = sliderM0.value - 0.003;
 			updateM0();
@@ -175,57 +175,48 @@ let handleLeapInput = function(frame) {
 			console.log("preplus"+sliderM0.value);
 			sliderM0.value = parseFloat(sliderM0.value) + 0.003;
 			updateM0();
-		}
+		}*/
 	}
 	//gestures to zoom
 	if(frame.gestures.length > 0)
 	{
-		let leftSwipeLH = 0;
-		let leftSwipeRH = 0;
-		let rightSwipeLH = 0;
-		let rightSwipeRH = 0;
 		for(let g=0; g < frame.gestures.length; g++)
 		{
 			let gesture = frame.gestures[g];
 			if(gesture.type == "swipe")
 			{
-				if(gesture.direction[0] > 0)
+				console.log(gesture.speed);
+				if(Math.abs(gesture.direction[0])>Math.abs(gesture.direction[1]))
 				{
-					if(frame.hand(gesture.handIds[0]).type == "right")
+					if(gesture.direction[0] > 0)
 					{
-						rightSwipeRH++;
+						//rightswipe
+						dollyspeed+=0.002*gesture.speed/50;
+						break;
 					}
 					else
 					{
-						rightSwipeLH++;
+						dollyspeed-=0.002*gesture.speed/50;
+						break;
+						//leftswipe
 					}
 				}
 				else
 				{
-					if(frame.hand(gesture.handIds[0]).type == "right")
+					if(gesture.direction[1] > 0)
 					{
-						leftSwipeRH++;
+						sliderM0.value = sliderM0.value - 0.003*gesture.speed/50;
+						updateM0();
+						break;
 					}
 					else
 					{
-						leftSwipeLH++;
+						sliderM0.value = parseFloat(sliderM0.value) + 0.003*gesture.speed/50;
+						updateM0();
+						break;
 					}
 				}
 			}
-		}
-		console.log("leftswipeLH:"+leftSwipeLH+" rightswipeRH:"+rightSwipeRH+" leftswipeRH:"+leftSwipeRH+" rightSwipeLH:"+rightSwipeLH);
-		if((leftSwipeRH>0) && (rightSwipeLH>0))
-		{
-			//camera zoom out
-			console.log("zoom out");
-			cameraRadius+=5;
-		}
-		else 
-		if((leftSwipeLH>0)&&(rightSwipeRH>0))
-		{
-			//camera zoom in
-			console.log("zoom in");
-			cameraRadius-=5;
 		}
 	}
 }
