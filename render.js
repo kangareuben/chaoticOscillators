@@ -101,13 +101,17 @@ function init()
 		chaos: 10,
 		convergence: 11,
 		duality: 53,
-		stability: 30
+		stability: 30,
+		foregroundVol: 100,
+		backgroundVol: 20
 	};
 	
 	gui.add(params, "chaos").min(0).max(100).step(1).listen();
 	gui.add(params, "convergence").min(0).max(100).step(1).listen();
 	gui.add(params, "duality").min(0).max(100).step(1).listen();
 	gui.add(params, "stability").min(0).max(100).step(1).listen();
+	gui.add(params, "foregroundVol").min(0).max(100).step(1).listen();
+	gui.add(params, "backgroundVol").min(0).max(100).step(1).listen();
 }
 
 function postProcessing()
@@ -211,19 +215,12 @@ function drawSpline(pointArray)
 	modulationFrequency = 2 / Math.abs(boxmesh.position.x / boxmesh.position.y);
 	mod.frequency.value = modulationFrequency;
 	gain.gain.value = modulationGain;
-	gain2.gain.value = 100 / (camera.position.distanceTo(boxmesh.position));
-	
-	//carr.frequency.value += mod.frequency.value * modulationGain;
-	
-	//osc.frequency.value = boxmesh.position.y*((mod.frequency.value * boxmesh.position.x)/(camera.position.distanceTo(boxmesh.position)))*100;
-	//console.log(osc.frequency.value);
-	//gain.gain.value = (camera.position.distanceTo(boxmesh.position)) * 0.0005;
-	
+	gain2.gain.value = 5*(params.backgroundVol) / (camera.position.distanceTo(boxmesh.position)); 
 	
 	//playaudio
 	if(counter%soundDensity==0)
 	{
-		playSound(Math.sqrt(Math.pow(boxmesh.position.x,2)+Math.pow(boxmesh.position.y,2)+Math.pow(boxmesh.position.z,2)),0.02,1,0.001,0.009,750 - Math.random()*1000);
+		playSound(Math.sqrt(Math.pow(boxmesh.position.x,2)+Math.pow(boxmesh.position.y,2)+Math.pow(boxmesh.position.z,2)),0.02,(params.foregroundVol/100),0.001,0.009,750 - Math.random()*1000);
 	}
 	counter++;
 	if((counter%190==0)&&(soundDensity>5))

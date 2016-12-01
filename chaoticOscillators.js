@@ -1,24 +1,9 @@
-/*
-let canvas = document.getElementById("canvas");
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight - 100;
-
-let ctx = canvas.getContext("2d");
-*/
-
- function p(x){
-	//let tempM0 = sliderM0.value;
-	//let tempM1 = sliderM1.value;
+function p(x)
+{
 	let tempM0 = mapInputToOutputRange(params.chaos,0,100,-1.05,-2);
 	let tempM1 = mapInputToOutputRange(params.duality,0,100,-0.96,-0.5);
-   return tempM1*x+(tempM0-tempM1)/2*(Math.abs(x+1)-Math.abs(x-1));
+	return tempM1*x+(tempM0-tempM1)/2*(Math.abs(x+1)-Math.abs(x-1));
 }
-
-// let sliderC1 = document.getElementById("SliderC1");
-// let sliderC2 = document.getElementById("SliderC2");
-// let sliderC3 = document.getElementById("SliderC3");
-// let sliderM0 = document.getElementById("SliderM0");
-// let sliderM1 = document.getElementById("SliderM1");
 
 let leapCenter, leapHeight, leapWidth, leapDepth;
 
