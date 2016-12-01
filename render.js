@@ -99,13 +99,13 @@ function init()
 	
 	params = {
 		chaos: 10,
-		decay: 11,
+		convergence: 11,
 		duality: 53,
 		stability: 30
 	};
 	
 	gui.add(params, "chaos").min(0).max(100).step(1).listen();
-	gui.add(params, "decay").min(0).max(100).step(1).listen();
+	gui.add(params, "convergence").min(0).max(100).step(1).listen();
 	gui.add(params, "duality").min(0).max(100).step(1).listen();
 	gui.add(params, "stability").min(0).max(100).step(1).listen();
 }

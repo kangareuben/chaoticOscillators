@@ -28,7 +28,7 @@ function f(x,y,z,t)
 	return( mapInputToOutputRange(params.stability,0,100,18,10)*(y-x-p(x)) ); 
 }
 
-function g(x,y,z,t){ return( mapInputToOutputRange(params.decay,0,100,0.5,5.0)*(x-y+z) ); }
+function g(x,y,z,t){ return( mapInputToOutputRange(params.convergence,0,100,0.5,5.0)*(x-y+z) ); }
 
 function h(x,y,z,t){ return( -1*28*y ); }
  
@@ -139,49 +139,15 @@ let drawChua = function(){
 	setInterval(chuaStep, 10);
 }
 
-let chuaStep = function(frame){
+let chuaStep = function(/*frame*/){
 	gData = grapher(gData);
 	splinePoints.push(new THREE.Vector3(100*gData[0].x,100*gData[0].y,100*gData[0].z));
 	update();
-	handleLeapInput(frame);
+	//handleLeapInput(frame);
 }
 
 let handleLeapInput = function(frame) {
 	updateLeapInteractionBox(frame);
-	// for(let f=0;f < frame.fingers.length; f++)
-	// {
-		// let finger = frame.fingers[f];
-		// sliderM0.value = mapInputToOutputRange(finger.dipPosition[1], leapCenter[1] - leapHeight/2, leapCenter[1] + leapHeight/2, -1.05, -2);
-		// updateM0();
-	// }
-	if(frame.hands.length>0)
-	{
-		//zoom using palmposition and depth
-		let palmZ = frame.hands[0].palmPosition[2];
-		let palmY = frame.hands[0].palmPosition[1];
-		// if(palmZ>(leapCenter[2]+leapDepth/4))
-		// {
-			// cameraRadius+=1.5;
-		// }
-		// else if(palmZ<(leapCenter[2]-leapDepth/4))
-		// {
-			// cameraRadius-=1.5;
-		// }
-		//control M0 using palmPosition and height		
-		/*else if(palmY>(leapCenter[1]+leapHeight/4))
-		{
-			sliderM0.value = sliderM0.value - 0.003;
-			updateM0();
-		}
-		else if(palmY<80)
-		{
-			//console.log(palmY);
-			//console.log(leapCenter[1]-leapHeight/4);
-			console.log("preplus"+sliderM0.value);
-			sliderM0.value = parseFloat(sliderM0.value) + 0.003;
-			updateM0();
-		}*/
-	}
 	//gestures to zoom
 	if(frame.gestures.length > 0)
 	{
@@ -210,16 +176,12 @@ let handleLeapInput = function(frame) {
 				{
 					if(gesture.direction[1] > 0)
 					{
-						// sliderM0.value = sliderM0.value - 0.003*gesture.speed/50;
-						// updateM0();
 						params.chaos+=3;
 						params.chaos = Clamp(params.chaos,0,100);
 						break;
 					}
 					else
 					{
-						// sliderM0.value = parseFloat(sliderM0.value) + 0.003*gesture.speed/50;
-						// updateM0();
 						params.chaos-=3;
 						params.chaos = Clamp(params.chaos,0,100);
 						break;
@@ -241,36 +203,5 @@ let update = function() {
 }
 
 let splinePoints = new Array();
-//drawChua();
-Leap.loop({enableGestures: true},chuaStep);
-
-// let updateC1 = function() {
-    // document.getElementById("PC1").innerHTML = "c1: " + sliderC1.value;
-// };
-
-// let updateC2 = function() {
-    // document.getElementById("PC2").innerHTML = "c2: " + sliderC2.value;
-// };
-
-// let updateC3 = function() {
-    // document.getElementById("PC3").innerHTML = "c3: " + sliderC3.value;
-// };
-
-// let updateM0 = function() {
-    // document.getElementById("PM0").innerHTML = "m0: " + sliderM0.value;
-// };
-
-// let updateM1 = function() {
-    // document.getElementById("PM1").innerHTML = "m1: " + sliderM1.value;
-// };
-
-// updateC1();
-// updateC2();
-// updateC3();
-// updateM0();
-// updateM1();
-// sliderC1.onmousemove = updateC1;
-// sliderC2.onmousemove = updateC2;
-// sliderC3.onmousemove = updateC3;
-// sliderM0.onmousemove = updateM0;
-// sliderM1.onmousemove = updateM1;
+drawChua();
+Leap.loop({enableGestures: true},handleLeapInput);
